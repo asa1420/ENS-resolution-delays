@@ -10,19 +10,19 @@ import (
 )
 
 func main() {
-	f, err:= excelize.OpenFile("measurement.xlsx")
+	f, err := excelize.OpenFile("measurement.xlsx")
 	if err != nil {
 		panic(err)
 	}
-	var domains = [5]string{"ethereum.eth","almonit.eth", "pepesza.eth", "alex.eth", "bitcoingenerator.eth"}
-	var cells = [5]string{"P5","Q5","R5","S5","T5"}
+	var domains = [5]string{"ethereum.eth", "almonit.eth", "pepesza.eth", "alex.eth", "bitcoingenerator.eth"}
+	var cells = [5]string{"P5", "Q5", "R5", "S5", "T5"}
 	for x, i := range domains {
 		start := time.Now()
 		client, err := ethclient.Dial("//./pipe/geth.ipc")
 		if err != nil {
 			panic(err)
 		}
-		resol, err := ens.NewResolver(client, i) // most of the delay is here, and the first domain to be fetched gets the most delay
+		resol, err := ens.NewResolver(client, i) // most of the delay is here, and the first domain to be resolved gets the most delay
 		q, err := resol.Contenthash()
 		CID, err := ens.ContenthashToString(q)
 		sh := shell.NewShell("localhost:5001")
@@ -30,10 +30,10 @@ func main() {
 		elapsed := time.Since(start)
 		log.Printf("time taken is %s", elapsed)
 		delay := elapsed.Seconds()
-		f.SetCellFloat("Sheet1",cells[x],delay, 4, 64)
+		f.SetCellFloat("Sheet1", cells[x], delay, 4, 64)
 		print(cat) // to avoid unused variable error
 	}
-	f.SetCellValue("Sheet1","O5",time.Now())
+	f.SetCellValue("Sheet1", "O5", time.Now())
 	err = f.Save()
 	if err != nil {
 		panic(err)
